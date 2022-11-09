@@ -1,10 +1,124 @@
 # pokemongo-galaxy-demo
-This repository corresponds with the pokemon and mongo (get it?) demo done at Trino Summit 11/10.
+This repository corresponds with the pokemon and mongo (get it?) demo done at Trino Summit 11/10. If you want more in depth information on setup details, please reach out to me. I'd love to send you more information and help you get started. 
 
 
 ## Pokemon(go) for the win
 
-Hello fellow data friends. Welcome to this repository. The purpose of this tutorial is to showcase the benefits of using Trino to create a data lakehouse architecture within your data lake. We're using [Starburst Galaxy](https://galaxy.starburst.io/login) because it's the easiest way to try out Trino. What we will do is query data from MongoDB and S3, create a reporting structure within our data lake, and then create our Thoughtspot dashboard. 
+Hello fellow data friends. Welcome to this repository. The purpose of this tutorial is to showcase the benefits of using Trino to create a data lakehouse architecture within your data lake. We're using [Starburst Galaxy](https://galaxy.starburst.io/login) because it's the easiest way to try out Trino. What we will do is query data from MongoDB and S3, create a reporting structure within our data lake, and then use the consume layer in our reporting structure to create our Thoughtspot dashboard. 
 
+In this scenario, we’re going to query Pokemon pokedex data from MongoDB and ingest Pokemon Go spawn location data which lands as raw CSV files in our data lake. We then use Starburst Galaxy to read the data from the landing files, clean up, and optimize that raw data into more performant ORC files in the structure tables. The last step is to join and transform the spawn data and pokedex data into a single table that is cleaned and ready to be utilized by a data analyst, data scientist, or other data consumer. I then want to put on my data analyst hat and do some visualizations to analyze the common types of pokemon that spawn in San Francisco. 
 
 ![Trino Summit Data Lakehouse Architecture](https://user-images.githubusercontent.com/33696269/200690090-434d0428-8e06-403f-9c34-d794f87cd85f.png)
+
+
+## Add Pokedex to MongoDB
+
+In this scenario, MongoDB holds the pokedex data. So it holds all the information on the Bulbasaur pokemon such as it's unique number, it's Type 1, Type 2, Abilities, Experience Type, Mega Evolution status, and much more.  Insert this data into mongodb. I'm using Atlas. 
+
+1. Download the pokedex file from the repository. [INSERT FILE]
+2. Create a [MongoDB Atlas account](https://www.mongodb.com/cloud/atlas/register).
+3. [Follow the instructions](https://www.mongodb.com/docs/atlas/getting-started/) to set up your Atlas account. I used Compass as a way to view my data.  
+4. Upload the pokedex CSV to MongoDB. 
+
+![Uploading Screen Shot 2022-11-08 at 9.59.22 PM.png…]()
+
+
+## Add Pokemon Go data to S3
+
+We imagine that our Pokemon Go data is potentially getting streamed into our data lake. For the purpose of this repo, we are using the CSV file as a snapshot in our stream that we can manually upload to our data lake ourselves. 
+
+1. Create a S3 bucket with a descriptive name such as ```pokemon-demo``` . Use all the defaults.
+2. Download the CSV containing the Pokemon Go data. {INSERT CSV}
+3. Create three subfolders. 
+    - The first subfolder should hold the CSV contaning the Pokemon Go data. Suggested name: `pokemon_spawns`.
+    - The second one should hold the Hive landing table that make up the land layer. Suggested name `pokemon_hive`.
+    - The third one should hold the Iceberg tables that make up the structure and the consume layers. Suggested   name: `pokemon_iceberg`.
+4. Upload the Pokemon Spawns CSV into the corresponding folder.
+5. Create an AWS access key that will be used as the
+   [authentication method for connecting from {{site.terms.sg}} to
+   S3](https://docs.starburst.io/starburst-galaxy/security/external-aws.html)
+   - Go to the IAM Management Console
+   - Select *Users*
+   - Select *Add Users*
+   - Provide a Descriptive User Name like ```<username>-aws-covid```
+   - Select AWS Credential Type: *Access key - Programmatic access*
+   - Set Permissions: *Attach existing policies directly*
+   - Add the following policy: *AmazonS3FullAccess*
+
+6. Finish creating the access key with the rest of the defaults, and then save
+   your AWS Access Key and Secret Access Key.
+   
+## Create a Starburst Galaxy account
+
+1. Navigate to the [Starburst Galaxy login
+   page](https://galaxy.starburst.io/login).
+
+2. If you already don't have an account, create a new one and verify the account
+   with your email.
+
+## Create Starburst Galaxy Catalogs
+
+1. Navigate to the *Catalogs* tab. Click *Configure a Catalog*.
+
+2. Create an S3 Catalog.
+   - Catalog name: ```aws_pokemon``` or your pokemon of choice
+   - Add a relevant description
+   - Authenticate to S3 through the AWS Access Key/Secret created earlier
+   - Metastore configuration: *"I don't have a metastore"*
+   - Default directory name: ```<username>_metadata```
+   - Enable *Allow creating external tables*
+   - Enable *Allow writing to external tables*
+   - Select default table format: *Iceberg*
+   - Hit _Skip_ on the *Set Permissions* page
+
+For more help configuring your AWS catalog, [LINK]visit the documentation.
+
+3.Create a MongoDB Catalog.
+   - Catalog name: ```mongo_pokedex``` or your pokemon of choice
+   - Add a relevant description
+   - Authenticate to MongoDB using either a direct connection or via SSH tunnel. NOTE: If you have any special characters in your password, those may need to be coded properly. 
+
+For more help configuring your MongoDB catalog, {LINK} visit the documentation.
+
+## Create a Starburst Galaxy Cluster
+
+1. Navigate to the Clusters pane.  
+2. Click *Create a new cluster*
+   - Enter cluster name: ```<username>-pokemon```
+   - Cluster size: *Free*
+   - Cluster type: *Standard*
+   - Catalogs: ```aws_pokemon``` & ```mongo_pokedex``` (select the catalogs previously created)
+   - Cloud provider region: *US East (N Virginia)* aka *us-east-1*
+
+## Create the land layer in the reporting structure
+
+To create the land layer, you will first create a schema. Then we will create the raw table. 
+
+1. Create schema in the pokemon spawns bucket. ```CREATE SCHEMA landing_zone WITH (location = 's3://pokemon-demo/pokemon_hive/') ```
+2. Create the landing table for the pokemon spawns. The external location should point to the location of your uploaded CSV file.
+ ```sql
+  CREATE TABLE pokemon_spawns_land(
+  "s2_id" VARCHAR,
+  "s2_token" VARCHAR,
+  "num" VARCHAR,
+  "name" VARCHAR,
+  "lat" VARCHAR,
+  "long" VARCHAR,
+  "encounter_ms" VARCHAR,
+  "disappear_ms" VARCHAR
+)
+WITH (
+  type = 'HIVE',
+  format = 'CSV',
+  external_location = 's3://pokemon-demo/pokemon_spawns/csv/',
+  skip_header_line_count=1
+); 
+```
+
+## Create the structure table in the reporting structure
+
+## Create the consume table in the reporting structure
+
+## Build a dashboard on ThoughtSpot
+
+
