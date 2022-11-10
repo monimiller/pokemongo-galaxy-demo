@@ -1,5 +1,5 @@
 # pokemongo-galaxy-demo
-This repository corresponds with the pokemon and mongo (get it?) demo done at Trino Summit 11/10. If you want more in depth information on setup details, please reach out to me. I'd love to send you more information and help you get started. 
+This repository corresponds with the pokemon and mongo (get it?) demo done at Trino Summit 11/10. If you want more in depth information on setup details, please reach out to me. I'd love to send you more information to help you get started and answer any questions. 
 
 
 ## Pokemon(go) for the win
