@@ -14,7 +14,7 @@ In this scenario, we’re going to query Pokemon pokedex data from MongoDB and i
 
 ## Add Pokedex to MongoDB
 
-In this scenario, MongoDB holds the pokedex data. So it holds all the information on the Bulbasaur pokemon such as it's unique number, it's Type 1, Type 2, Abilities, Experience Type, Mega Evolution status, and much more.  Insert this data into mongodb. I'm using Atlas. 
+In this scenario, MongoDB holds the pokedex data. So it holds all the information on the Pokemon such as it's unique number, it's Type 1, Type 2, Abilities, Experience Type, Mega Evolution status, and much more. To query this data, first insert this data into MongoDB. I'm using Atlas. 
 
 1. Download the pokedex file from the repository. [INSERT FILE]
 2. Create a [MongoDB Atlas account](https://www.mongodb.com/cloud/atlas/register).
@@ -28,12 +28,12 @@ In this scenario, MongoDB holds the pokedex data. So it holds all the informatio
 
 We imagine that our Pokemon Go data is potentially getting streamed into our data lake. For the purpose of this repo, we are using the CSV file as a snapshot in our stream that we can manually upload to our data lake ourselves. 
 
-1. Create a S3 bucket with a descriptive name such as ```pokemon-demo``` . Use all the defaults.
+1. Create a S3 bucket with a descriptive name such as `pokemon-demo` . Use all the defaults.
 2. Download the CSV containing the Pokemon Go data. {INSERT CSV}
 3. Create three subfolders. 
-    - The first subfolder should hold the CSV contaning the Pokemon Go data. Suggested name: `pokemon_spawns`.
-    - The second one should hold the Hive landing table that make up the land layer. Suggested name `pokemon_hive`.
-    - The third one should hold the Iceberg tables that make up the structure and the consume layers. Suggested   name: `pokemon_iceberg`.
+    - The first subfolder should hold the CSV contaning the Pokemon Go data. Suggested name: `pokemon_spawns_csv`.
+    - The second one should hold the Hive landing table that make up the land layer. Suggested name `pokemon-hive`.
+    - The third one should hold the Iceberg tables that make up the structure and the consume layers. Suggested   name: `pokemon-iceberg`.
 4. Upload the Pokemon Spawns CSV into the corresponding folder.
 5. Create an AWS access key that will be used as the
    [authentication method for connecting from {{site.terms.sg}} to
@@ -41,13 +41,14 @@ We imagine that our Pokemon Go data is potentially getting streamed into our dat
    - Go to the IAM Management Console
    - Select *Users*
    - Select *Add Users*
-   - Provide a Descriptive User Name like ```<username>-aws-covid```
+   - Provide a Descriptive User Name like ```<username>-aws-pokemon```
    - Select AWS Credential Type: *Access key - Programmatic access*
    - Set Permissions: *Attach existing policies directly*
    - Add the following policy: *AmazonS3FullAccess*
 
 6. Finish creating the access key with the rest of the defaults, and then save
    your AWS Access Key and Secret Access Key.
+  
    
 ## Create a Starburst Galaxy account
 
@@ -58,6 +59,8 @@ We imagine that our Pokemon Go data is potentially getting streamed into our dat
    with your email.
 
 ## Create Starburst Galaxy Catalogs
+
+For this portion, I will be letting Starburst Galaxy do the metastore configurations for me. You also have the option to use Glue or Hive, which I have also done. 
 
 1. Navigate to the *Catalogs* tab. Click *Configure a Catalog*.
 
@@ -72,14 +75,14 @@ We imagine that our Pokemon Go data is potentially getting streamed into our dat
    - Select default table format: *Iceberg*
    - Hit _Skip_ on the *Set Permissions* page
 
-For more help configuring your AWS catalog, [LINK]visit the documentation.
+For more help configuring your AWS catalog, [visit the documentation](https://docs.starburst.io/starburst-galaxy/catalogs/s3.html).
 
 3.Create a MongoDB Catalog.
    - Catalog name: ```mongo_pokedex``` or your pokemon of choice
    - Add a relevant description
    - Authenticate to MongoDB using either a direct connection or via SSH tunnel. NOTE: If you have any special characters in your password, those may need to be coded properly. 
 
-For more help configuring your MongoDB catalog, {LINK} visit the documentation.
+For more help configuring your MongoDB catalog, [visit the documentation](https://docs.starburst.io/starburst-galaxy/catalogs/mongodb.html).
 
 ## Create a Starburst Galaxy Cluster
 
