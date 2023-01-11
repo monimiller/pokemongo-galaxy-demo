@@ -1,0 +1,227 @@
+guid: 5f9b6192-6d20-4556-aa1f-c050434d039f
+liveboard:
+  name: Pokemon
+  description: Visualizations of pokemon data
+  visualizations:
+  - id: Viz_1
+    answer:
+      name: Number of Pokemon
+      description: Number of pokemon by location.
+      tables:
+      - id: pokemon_spawns_by_type
+        name: pokemon_spawns_by_type
+      search_query: "[lat] [long] [number]"
+      answer_columns:
+      - name: long
+      - name: Total number
+      - name: lat
+      table:
+        table_columns:
+        - column_id: lat
+          show_headline: false
+        - column_id: long
+          show_headline: false
+        - column_id: Total number
+          show_headline: false
+        ordered_column_ids:
+        - lat
+        - long
+        - Total number
+        client_state: ""
+        client_state_v2: "{\"tableVizPropVersion\": \"V1\"}"
+      chart:
+        type: GEO_BUBBLE
+        chart_columns:
+        - column_id: lat
+        - column_id: long
+        - column_id: Total number
+        axis_configs:
+        - x:
+          - lat
+          - long
+          "y":
+          - Total number
+        client_state: ""
+        client_state_v2: "{\"version\": \"V4DOT2\",\"chartProperties\": {\"mapviewport\": {\"center\": [-1.362702205849263E7,4548604.511212091],\"zoomLevel\": 13.046240813576285},\"chartSpecific\": {}},\"axisProperties\": [{\"id\": \"e16338f9-5827-4d31-bb69-cb26e770b38a\",\"properties\": {\"axisType\": \"Y\",\"linkedColumns\": [\"Total number\"],\"isOpposite\": false}},{\"id\": \"6adc517e-64be-4c88-9b07-5ae6b381dee8\",\"properties\": {\"axisType\": \"X\",\"linkedColumns\": [\"lat\",\"long\"]}}],\"systemSeriesColors\": [{\"serieName\": \"long\",\"color\": \"#06BF7F\"},{\"serieName\": \"Total number\",\"color\": \"#F04152\"}]}"
+      display_mode: CHART_MODE
+    viz_guid: 0c01b9b2-81cf-4d59-bb60-e42b0fe69efb
+  - id: Viz_2
+    answer:
+      name: Type of Pokemon
+      description: 'Number of pokemon by Type 1. '
+      tables:
+      - id: pokemon_spawns_by_type
+        name: pokemon_spawns_by_type
+      search_query: "[number] [type1] [type2]"
+      answer_columns:
+      - name: type1
+      - name: Total number
+      - name: type2
+      table:
+        table_columns:
+        - column_id: type1
+          show_headline: false
+        - column_id: type2
+          show_headline: false
+        - column_id: Total number
+          show_headline: false
+        ordered_column_ids:
+        - type1
+        - type2
+        - Total number
+        client_state: ""
+        client_state_v2: "{\"tableVizPropVersion\": \"V1\"}"
+      chart:
+        type: PIE
+        chart_columns:
+        - column_id: type1
+        - column_id: type2
+        - column_id: Total number
+        axis_configs:
+        - x:
+          - type1
+          "y":
+          - Total number
+        client_state: ""
+        client_state_v2: "{\"version\": \"V4DOT2\",\"chartProperties\": {\"responsiveLayoutPreference\": \"AUTO_ON\",\"chartSpecific\": {}},\"axisProperties\": [{\"id\": \"1cca4b53-7ba2-49a3-a93f-d244c505231f\",\"properties\": {\"axisType\": \"Y\",\"linkedColumns\": [\"Total number\"],\"isOpposite\": false}},{\"id\": \"b286665a-758c-4cdb-a2b1-58012e2e09c6\",\"properties\": {\"axisType\": \"X\",\"linkedColumns\": [\"type1\"]}}],\"systemSeriesColors\": [{\"serieName\": \"bug\",\"color\": \"#FFA97E\"},{\"serieName\": \"dark\",\"color\": \"#FF8142\"},{\"serieName\": \"dragon\",\"color\": \"#6A4ABA\"},{\"serieName\": \"electric\",\"color\": \"#B094F8\"},{\"serieName\": \"fairy\",\"color\": \"#8C62F5\"},{\"serieName\": \"fighting\",\"color\": \"#049160\"},{\"serieName\": \"fire\",\"color\": \"#56D3A8\"},{\"serieName\": \"ghost\",\"color\": \"#06BF7F\"},{\"serieName\": \"grass\",\"color\": \"#BF982A\"},{\"serieName\": \"ground\",\"color\": \"#FCD977\"},{\"serieName\": \"ice\",\"color\": \"#FCC838\"},{\"serieName\": \"normal\",\"color\": \"#369FAA\"},{\"serieName\": \"poison\",\"color\": \"#82DFE9\"},{\"serieName\": \"psychic\",\"color\": \"#48D1E0\"},{\"serieName\": \"rock\",\"color\": \"#2359B6\"},{\"serieName\": \"steel\",\"color\": \"#71A1F4\"},{\"serieName\": \"water\",\"color\": \"#2E75F0\"},{\"serieName\": \"Total number\",\"color\": \"#06BF7F\"}]}"
+      display_mode: CHART_MODE
+    viz_guid: 75d4550f-03e6-4822-98d2-ac8ad64b9637
+  - id: Viz_3
+    answer:
+      name: Number of Pokemon
+      description: "Number of pokemon by Type 1, Type 2. "
+      tables:
+      - id: pokemon_spawns_by_type
+        name: pokemon_spawns_by_type
+      search_query: "[number] [type1] [type2]"
+      answer_columns:
+      - name: type2
+      - name: type1
+      - name: Total number
+      table:
+        table_columns:
+        - column_id: type1
+          show_headline: false
+        - column_id: type2
+          show_headline: false
+        - column_id: Total number
+          show_headline: false
+        ordered_column_ids:
+        - type1
+        - type2
+        - Total number
+        client_state: ""
+        client_state_v2: "{\"tableVizPropVersion\": \"V1\"}"
+      chart:
+        type: HEATMAP
+        chart_columns:
+        - column_id: type1
+        - column_id: type2
+        - column_id: Total number
+        axis_configs:
+        - x:
+          - type1
+          "y":
+          - type2
+          size: Total number
+        client_state: ""
+        client_state_v2: "{\"version\": \"V4DOT2\",\"chartProperties\": {\"responsiveLayoutPreference\": \"AUTO_ON\",\"chartSpecific\": {}},\"axisProperties\": [{\"id\": \"55d590ab-f6fb-4bae-976c-456f50709158\",\"properties\": {\"axisType\": \"Y\",\"linkedColumns\": [\"type2\"],\"isOpposite\": false}},{\"id\": \"ec0bbd82-cb54-4653-bd39-0a28ab987ffb\",\"properties\": {\"axisType\": \"X\",\"linkedColumns\": [\"type1\"]}}],\"systemSeriesColors\": [{\"serieName\": \"bug\",\"color\": \"#FFA97E\"},{\"serieName\": \"dark\",\"color\": \"#FF8142\"},{\"serieName\": \"dragon\",\"color\": \"#6A4ABA\"},{\"serieName\": \"electric\",\"color\": \"#B094F8\"},{\"serieName\": \"fairy\",\"color\": \"#8C62F5\"},{\"serieName\": \"fighting\",\"color\": \"#049160\"},{\"serieName\": \"fire\",\"color\": \"#56D3A8\"},{\"serieName\": \"ghost\",\"color\": \"#06BF7F\"},{\"serieName\": \"grass\",\"color\": \"#BF982A\"},{\"serieName\": \"ground\",\"color\": \"#FCD977\"},{\"serieName\": \"ice\",\"color\": \"#FCC838\"},{\"serieName\": \"normal\",\"color\": \"#369FAA\"},{\"serieName\": \"poison\",\"color\": \"#82DFE9\"},{\"serieName\": \"psychic\",\"color\": \"#48D1E0\"},{\"serieName\": \"rock\",\"color\": \"#2359B6\"},{\"serieName\": \"steel\",\"color\": \"#71A1F4\"},{\"serieName\": \"water\",\"color\": \"#2E75F0\"},{\"serieName\": \"Total number\",\"color\": \"#06BF7F\"},{\"serieName\": \"type2\",\"color\": \"#48d1e0\"}]}"
+      display_mode: CHART_MODE
+    viz_guid: 8bde1351-13b4-4195-b710-e28a2a4d348a
+  - id: Viz_4
+    answer:
+      name: Pokemon Prevalence by Name
+      description: Number of pokemon by name and type.
+      tables:
+      - id: pokemon_spawns_by_type
+        name: pokemon_spawns_by_type
+      search_query: "[number] [type1] [name]"
+      answer_columns:
+      - name: type1
+      - name: name
+      - name: Total number
+      table:
+        table_columns:
+        - column_id: type1
+          show_headline: false
+        - column_id: name
+          show_headline: false
+        - column_id: Total number
+          show_headline: false
+        ordered_column_ids:
+        - type1
+        - name
+        - Total number
+        client_state: ""
+        client_state_v2: "{\"tableVizPropVersion\": \"V1\"}"
+      chart:
+        type: STACKED_COLUMN
+        chart_columns:
+        - column_id: type1
+        - column_id: name
+        - column_id: Total number
+        axis_configs:
+        - x:
+          - name
+          "y":
+          - Total number
+          color:
+          - type1
+        client_state: ""
+        client_state_v2: "{\"version\": \"V4DOT2\",\"chartProperties\": {\"responsiveLayoutPreference\": \"AUTO_ON\",\"chartSpecific\": {}},\"axisProperties\": [{\"id\": \"ff7f6cc8-6c7c-420d-a2c6-e3aee6ec2e1a\",\"properties\": {\"axisType\": \"Y\",\"linkedColumns\": [\"Total number\"],\"isOpposite\": false}},{\"id\": \"037fe055-6032-4a1d-946b-2059dc16bca4\",\"properties\": {\"axisType\": \"X\",\"linkedColumns\": [\"name\"]}}],\"systemSeriesColors\": [{\"serieName\": \"bug\",\"color\": \"#FFA97E\"},{\"serieName\": \"dark\",\"color\": \"#FF8142\"},{\"serieName\": \"dragon\",\"color\": \"#6A4ABA\"},{\"serieName\": \"electric\",\"color\": \"#B094F8\"},{\"serieName\": \"fairy\",\"color\": \"#8C62F5\"},{\"serieName\": \"fighting\",\"color\": \"#049160\"},{\"serieName\": \"fire\",\"color\": \"#56D3A8\"},{\"serieName\": \"ghost\",\"color\": \"#06BF7F\"},{\"serieName\": \"grass\",\"color\": \"#BF982A\"},{\"serieName\": \"ground\",\"color\": \"#FCD977\"},{\"serieName\": \"ice\",\"color\": \"#FCC838\"},{\"serieName\": \"normal\",\"color\": \"#369FAA\"},{\"serieName\": \"poison\",\"color\": \"#82DFE9\"},{\"serieName\": \"psychic\",\"color\": \"#48D1E0\"},{\"serieName\": \"rock\",\"color\": \"#2359B6\"},{\"serieName\": \"steel\",\"color\": \"#71A1F4\"},{\"serieName\": \"water\",\"color\": \"#2E75F0\"},{\"serieName\": \"Total number\",\"color\": \"#06BF7F\"},{\"serieName\": \"7618b234-31d6-4a43-a30d-bc744c448fc6\",\"color\": \"#48d1e0\"},{\"serieName\": \"name\",\"color\": \"#48d1e0\"}]}"
+      display_mode: CHART_MODE
+    viz_guid: 7c784545-f2de-4ce8-b662-857a37fc94d6
+  - id: Viz_5
+    answer:
+      name: Pokemon locations
+      description: Number of pokemon by location.
+      tables:
+      - id: pokemon_spawns_by_type
+        name: pokemon_spawns_by_type
+      search_query: "[lat] [long] [number]"
+      answer_columns:
+      - name: Total number
+      - name: lat
+      - name: long
+      table:
+        table_columns:
+        - column_id: lat
+          show_headline: false
+        - column_id: long
+          show_headline: false
+        - column_id: Total number
+          show_headline: false
+        ordered_column_ids:
+        - lat
+        - long
+        - Total number
+        client_state: ""
+        client_state_v2: "{\"tableVizPropVersion\": \"V1\"}"
+      chart:
+        type: GEO_BUBBLE
+        chart_columns:
+        - column_id: lat
+        - column_id: long
+        - column_id: Total number
+        axis_configs:
+        - x:
+          - lat
+          - long
+          "y":
+          - Total number
+        client_state: ""
+        client_state_v2: "{\"version\": \"V4DOT2\",\"chartProperties\": {\"mapviewport\": {\"center\": [-1.1656535833644979E7,4489989.32094569],\"zoomLevel\": 4.046240813576285},\"chartSpecific\": {}},\"axisProperties\": [{\"id\": \"e16338f9-5827-4d31-bb69-cb26e770b38a\",\"properties\": {\"axisType\": \"Y\",\"linkedColumns\": [\"Total number\"],\"isOpposite\": false}},{\"id\": \"6adc517e-64be-4c88-9b07-5ae6b381dee8\",\"properties\": {\"axisType\": \"X\",\"linkedColumns\": [\"lat\",\"long\"]}}],\"systemSeriesColors\": [{\"serieName\": \"long\",\"color\": \"#06BF7F\"},{\"serieName\": \"Total number\",\"color\": \"#F04152\"}]}"
+      display_mode: CHART_MODE
+    viz_guid: 29770d3e-d4c9-4712-8c35-2c2b23e9caa5
+  layout:
+    tiles:
+    - visualization_id: Viz_4
+      size: LARGE
+    - visualization_id: Viz_5
+      size: MEDIUM
+    - visualization_id: Viz_1
+      size: MEDIUM
+    - visualization_id: Viz_2
+      size: MEDIUM
+    - visualization_id: Viz_3
+      size: MEDIUM

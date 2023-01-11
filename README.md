@@ -168,17 +168,18 @@ named like above, select ```aws_pokemon``` .
 To create the land layer, you will first create a schema. Then we will create
 the raw table from the CSV in S3.
 
-1. Create schema in the pokemon hive bucket. ```CREATE SCHEMA landing_zone WITH
+1. Create the land schema in the pokemon hive bucket. ```CREATE SCHEMA hive WITH
    (location = 's3://<AWS_BUCKET>/pokemon-hive/') ```
-   example: ```CREATE SCHEMA landing_zone WITH
+   example: ```CREATE SCHEMA hive WITH
    (location = 's3://pokemon-demo/pokemon-hive/') ```
 2. Create the landing table for the pokemon spawns. The external location should
    point to the location of your uploaded CSV file.
 
 Update the CREATE TABLE statement to properly account for your own cluster,
 catalog, and external location.
+
  ```sql
-  CREATE TABLE aws_pokemon.landing_zone.pokemon_spawns(
+  CREATE TABLE aws_pokemon.hive.pokemon_spawns(
   "s2_id" VARCHAR,
   "s2_token" VARCHAR,
   "num" VARCHAR,
@@ -197,7 +198,7 @@ WITH (
 ```
 Example:
  ```sql
-CREATE TABLE aws_pokemon.landing_zone.pokemon_spawns(
+CREATE TABLE aws_pokemon.hive.pokemon_spawns(
   "s2_id" VARCHAR,
   "s2_token" VARCHAR,
   "num" VARCHAR,
@@ -218,23 +219,25 @@ WITH (
 Select from your table to validate that it's querying the right information.
 
 ```sql
-SELECT * FROM aws_pokemon.landing_zone.pokemon_spawns LIMIT 10;
+SELECT * FROM aws_pokemon.hive.pokemon_spawns LIMIT 10;
 ```
 ## Create the structure table in the reporting structure
 
 We will create the structure table in all Iceberg format.  Since the pokedex
 table is a dimension table containing pokemon attributes, I didn't feel the need
-to copy it over into the land table. We will just build from here. 
+to copy it over into the land table. We will just build from here.
 
-1. Create the schema in the pokemon iceberg table. ```CREATE SCHEMA landing_zone
-   WITH (location = 's3://pokemon-demo/pokemon_iceberg/') ```
-2. Create the structure table for the pokemon go spawn data stored in S3. 
+1. Create the structure schema in the pokemon structure bucket. ```CREATE SCHEMA iceberg WITH
+   (location = 's3://<AWS_BUCKET>/pokemon-iceberg/') ```
+   example: ```CREATE SCHEMA iceberg WITH
+   (location = 's3://pokemon-demo/pokemon-iceberg/') ```
+2. Create the structure table for the pokemon go spawn data stored in S3. If you
+   named your catalog differently than the example, replace appropriately.
 
 ```sql
-CREATE TABLE pokemon
+CREATE TABLE aws_pokemon.iceberg.pokemon_spawns
 WITH (
-  format = 'ORC',
-  location = 's3://pokemon-mm/structure/pokemon/orc'
+  format = 'ORC'
 ) AS
 SELECT
   CAST(num AS INTEGER) AS number,
@@ -243,13 +246,21 @@ SELECT
   CAST(long AS DOUBLE) AS long,
   CAST(encounter_ms AS BIGINT) AS encounter_ms,
   CAST(disappear_ms AS BIGINT) AS disappear_ms
-FROM aws_ketchum.catch_em_all.pokemon_csv;
+FROM aws_pokemon.hive.pokemon_spawns;
+```
+Select from your table to validate.
+
+```sql
+SELECT * FROM aws_pokemon.iceberg.pokemon_spawns LIMIT 10;
 ```
 
 4. Create the structure table for the pokemon pokedex data stored in MongoDB.
+   Make sure you appropriately replace your FROM location with the
+   <starburst-galaxy-catalog>.<mongodb-database>.<mongodb-collection>
+   appropriate for your setup.
 
 ```sql
-CREATE TABLE pokemon_pokedex_structure 
+CREATE TABLE aws_pokemon.iceberg.pokemon_pokedex
 WITH (
   format = 'ORC'
 ) AS
@@ -298,24 +309,46 @@ SELECT
   CAST("Height" AS DOUBLE) AS height,
   CAST("Weight" AS DOUBLE) AS weight,
   CAST("BMI" AS DOUBLE) AS bmi
-FROM mongodb.pokemongo.pokedex;
+FROM mongo_pokedex.pokemongo.pokedex;
 ```
+
+Select from your table to validate.
+
+```sql
+SELECT * FROM aws_pokemon.iceberg.pokemon_pokedex LIMIT 10;
+```
+
 
 ## Create the consume table in the reporting structure
 
 Create the consume table. This will combine the Type 1, Type 2, and Mega
 Evolution status from the pokedex for each pokemon found in the pokemon spawn
-data. 
+data.  We are only looking for pokemon within the San Fransisco Bay Area, so we
+will restrain the latitude and longitude to do so.
+
+Make sure if you have a different naming convention for your catalogs and
+schemas, you change the sql statement to appropriately match it.
 
 ```sql
-CREATE TABLE pokemon_spawns_by_type_2 AS
-SELECT s.*, p.type1, p.type2, p.legendary, p.mega_evolution
-FROM  pokemon_spawns p 
- JOIN pokemon s 
- ON p.number = s.number; 
+CREATE TABLE aws_pokemon.iceberg.pokemon_spawns_by_type AS
+SELECT s.*, p.type1, p.type2, p.legendary
+FROM  aws_ketchum.iceberg_pokemon.pokemon_pokedex p 
+ JOIN aws_ketchum.iceberg_pokemon.pokemon_spawns s 
+ ON p.number = s.number and p.mega_evolution = FALSE
+ WHERE lat >= 37.62 and lat <= 37.86
+AND long >= -122.51 and long <= -122.12;
+ ```
+
+Validate the table has pulled the data correctly.
+
+ ```sql
+SELECT * FROM aws_pokemon.iceberg.pokemon_spawns_by_type ORDER BY long desc LIMIT 10;
  ```
 
 ## Build a dashboard on ThoughtSpot
 
-I've downloaded the code to make this lightboard. If you want to play around
-yourself, please reach out. I'll send it to you. 
+I've downloaded the code to make this liveboard, it's in the github repository
+under the ThoughtSpot folder. If you want to recreate this yourself and are
+having trouble, please reach out as I'm happy to help.
+
+
