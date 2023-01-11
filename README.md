@@ -61,7 +61,7 @@ in our stream that we can manually upload to our data lake ourselves.
    be best to add an initial identifier to the bucket such as `pokemon-demo-mm`.
    This will be used throughout the entire tutorial, so make sure you are aware 
    of your S3 bucket name and accurately replace it where appropriate. Use all the defaults.
-2. Download the CSV containing the Pokemon Go data. {INSERT CSV}
+2. Download the CSV [containing the Pokemon Go data](https://github.com/monimiller/pokemongo-galaxy-demo/blob/main/source-files/aws-pokemon-spawns/pokemon-spawns.csv). 
 3. Create three subfolders.
     - The first subfolder should hold the CSV containing the Pokemon Go data.
       Suggested name: `pokemon_spawns_csv`.
