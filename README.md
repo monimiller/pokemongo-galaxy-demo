@@ -2,7 +2,10 @@
 This repository corresponds with the pokemon and mongo (get it?) demo done at
 Trino Summit 11/10. If you want more in depth information on setup details,
 please reach out to me. I'd love to send you more information to help you get
-started and answer any questions.
+started and answer any questions. To federate my data sources, my MongoDB AWS region
+is the same as my AWS S3 region, US East (N Virginia). Naming will be important
+throughout the tutorial, so make sure you remember your names for you S3 bucket,
+your catalogs, and your schemas.
 
 
 ## Pokemon(go) for the win
@@ -53,8 +56,10 @@ We are imagining that our Pokemon Go data is getting streamed into our
 data lake. For the purpose of this repo, we are using the CSV file as a snapshot
 in our stream that we can manually upload to our data lake ourselves.
 
-1. Create a S3 bucket with a descriptive name such as `pokemon-demo` . Use all
-   the defaults.
+1. Create a S3 bucket with a descriptive name such as `pokemon-demo` . It would
+   be best to add an initial identifier to the bucket such as `pokemon-demo-mm`.
+   This will be used throughout the entire tutorial, so make sure you are aware 
+   of your S3 bucket name and accurately replace it where appropriate. Use all the defaults.
 2. Download the CSV containing the Pokemon Go data. {INSERT CSV}
 3. Create three subfolders.
     - The first subfolder should hold the CSV containing the Pokemon Go data.
@@ -65,7 +70,7 @@ in our stream that we can manually upload to our data lake ourselves.
       and the consume layers. Suggested   name: `pokemon-iceberg`.
 4. Upload the Pokemon Spawns CSV into the corresponding folder example path:`s3://pokemon-demo/pokemon-spawns-csv/pokemon-spawns.csv`
 5. Create an AWS access key that will be used as the [authentication method for
-   connecting from {{site.terms.sg}} to
+   connecting from Starburst Galaxy to
    S3](https://docs.starburst.io/starburst-galaxy/security/external-aws.html)
    - Go to the IAM Management Console
    - Select *Users*
@@ -90,20 +95,25 @@ in our stream that we can manually upload to our data lake ourselves.
 
 For this portion, I will be letting Starburst Galaxy do the metastore
 configurations for me. You also have the option to use Glue or Hive, which I
-have also done. 
+have also done in the past.
 
 1. Navigate to the *Catalogs* tab. Click *Configure a Catalog*.
 
 2. Create an S3 Catalog.
    - Catalog name: ```aws_pokemon``` or your pokemon of choice
    - Add a relevant description
-   - Authenticate to S3 through the AWS Access Key/Secret created earlier
-   - Metastore configuration: *"I don't have a metastore"*
-   - Default directory name: ```<username>_metadata```
+   - Authenticate to S3 through the AWS Access Key/Secret Key created earlier
+   - Metastore type: *Starburst Galaxy*
+   - Default S3 bucket name: Enter the bucket you previously created. Example: `pokemon-demo`
+   - Default directory name: Enter your selected default directory name.
+     Example: `squirtle`
    - Enable *Allow creating external tables*
    - Enable *Allow writing to external tables*
    - Select default table format: *Iceberg*
-   - Hit _Skip_ on the *Set Permissions* page
+   - Hit _Test connection_
+   - Hit _Connect catalog_
+   - Hit _Save access controls_ on the *Set Permissions* page
+   - Select _Skip_ on the *Add to cluster* page
 
 For more help configuring your AWS catalog, [visit the
 documentation](https://docs.starburst.io/starburst-galaxy/catalogs/s3.html).
@@ -113,33 +123,62 @@ documentation](https://docs.starburst.io/starburst-galaxy/catalogs/s3.html).
    - Add a relevant description
    - Authenticate to MongoDB using either a direct connection or via SSH tunnel.
      NOTE: If you have any special characters in your password, those may need
-     to be coded properly. 
+     to be coded properly. Using MongoDB Atlas and Compass, you can authenticate
+     directly though your connection URL.
 
 For more help configuring your MongoDB catalog, [visit the
 documentation](https://docs.starburst.io/starburst-galaxy/catalogs/mongodb.html).
 
 ## Create a Starburst Galaxy Cluster
 
-1. Navigate to the Clusters pane.  
+1. Navigate to the Clusters pane.
 2. Click *Create a new cluster*
-   - Enter cluster name: ```<username>-pokemon```
-   - Cluster size: *Free*
-   - Cluster type: *Standard*
+   - Enter cluster name: ```pokemon-cluster```
    - Catalogs: ```aws_pokemon``` & ```mongo_pokedex``` (select the catalogs
      previously created)
+   - Cluster size: *Free*
+   - Cluster type: *Standard*
    - Cloud provider region: *US East (N Virginia)* aka *us-east-1*
+   - Hit _Create cluster_
+
+That cluster will start up and once we add the necessary permissions and the
+status changes to *Running* we will be ready to query! Navigate to the _Access control_ 
+tab to get started.
+
+## Add necessary admin permissions
+
+1. Navigate to  the _Access control_ tab. Select _Roles and privileges_
+2. Click into the highlighted *accountadmin* role
+3. Select _Privileges_
+4. Hit _Add privilege_
+   - Modify privileges for: *Location*
+   - Enter the S3 URI for your bucket. Add a _/*_ after the 
+     location, this will allow you to access all the subfolders you created
+     within that location. EX:_s3://pokemon-demo/*_
+
+You are set up to get started! Navigate to the _Query editor_ tab.
+## Navigate the query editor
+
+Select the cluster you created in the top right corner. If named like above,
+select ```pokemon-cluster```. Select your AWS catalog as the default catalog. If
+named like above, select ```aws_pokemon``` .
 
 ## Create the land layer in the reporting structure
 
 To create the land layer, you will first create a schema. Then we will create
-the raw table from the CSV in S3. 
+the raw table from the CSV in S3.
 
 1. Create schema in the pokemon hive bucket. ```CREATE SCHEMA landing_zone WITH
-   (location = 's3://pokemon-demo/pokemon_hive/') ```
+   (location = 's3://<AWS_BUCKET>/pokemon-hive/') ```
+   example: ```CREATE SCHEMA landing_zone WITH
+   (location = 's3://pokemon-demo/pokemon-hive/') ```
 2. Create the landing table for the pokemon spawns. The external location should
    point to the location of your uploaded CSV file.
+
+Update the CREATE TABLE statement to properly account for your own cluster,
+catalog, and external location.
  ```sql
-  CREATE TABLE pokemon_spawns_land(
+  CREATE TABLE aws_pokemon.landing_zone.pokemon_spawns(
   "s2_id" VARCHAR,
   "s2_token" VARCHAR,
   "num" VARCHAR,
@@ -152,11 +191,35 @@ the raw table from the CSV in S3.
 WITH (
   type = 'HIVE',
   format = 'CSV',
-  external_location = 's3://pokemon-demo/pokemon_spawns/csv/',
+  external_location = 's3://<S3 BUCKET NAME>/<CSV LOCATION>/',
   skip_header_line_count=1
 ); 
 ```
+Example:
+ ```sql
+CREATE TABLE aws_pokemon.landing_zone.pokemon_spawns(
+  "s2_id" VARCHAR,
+  "s2_token" VARCHAR,
+  "num" VARCHAR,
+  "name" VARCHAR,
+  "lat" VARCHAR,
+  "long" VARCHAR,
+  "encounter_ms" VARCHAR,
+  "disappear_ms" VARCHAR
+)
+WITH (
+  type = 'HIVE',
+  format = 'CSV',
+  external_location = 's3://pokemon-demo/pokemon-spawns-csv/',
+  skip_header_line_count=1
+);
+```
 
+Select from your table to validate that it's querying the right information.
+
+```sql
+SELECT * FROM aws_pokemon.landing_zone.pokemon_spawns LIMIT 10;
+```
 ## Create the structure table in the reporting structure
 
 We will create the structure table in all Iceberg format.  Since the pokedex
