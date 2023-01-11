@@ -47,6 +47,7 @@ data, first insert this data into MongoDB. I'm using Atlas.
    instructions](https://www.mongodb.com/docs/atlas/getting-started/) to set up
    your Atlas account. I used Compass as a way to view my data.
 4. Upload the pokedex CSV to MongoDB.
+
 <img width="578" alt="Screen Shot 2022-11-08 at 9 59 22 PM"
 src="https://user-images.githubusercontent.com/33696269/200935559-430fbda0-1d8d-4fe3-b577-99ec59dbd7de.png">
 
