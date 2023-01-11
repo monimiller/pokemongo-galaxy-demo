@@ -120,7 +120,7 @@ For more help configuring your AWS catalog, [visit the
 documentation](https://docs.starburst.io/starburst-galaxy/catalogs/s3.html).
 
 3.Create a MongoDB Catalog.
-   - Catalog name: ```mongo_pokedex``` or your pokemon of choice
+   - Catalog name: ```mongo_pokedex``` 
    - Add a relevant description
    - Authenticate to MongoDB using either a direct connection or via SSH tunnel.
      NOTE: If you have any special characters in your password, those may need
