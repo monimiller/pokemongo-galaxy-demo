@@ -257,7 +257,7 @@ SELECT * FROM aws_pokemon.iceberg.pokemon_spawns LIMIT 10;
 
 4. Create the structure table for the pokemon pokedex data stored in MongoDB.
    Make sure you appropriately replace your FROM location with the
-   <starburst-galaxy-catalog>.<mongodb-database>.<mongodb-collection>
+   `<starburst-galaxy-catalog>.<mongodb-database>.<mongodb-collection>`
    appropriate for your setup.
 
 ```sql
