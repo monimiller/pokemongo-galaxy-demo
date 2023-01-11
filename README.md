@@ -1,6 +1,6 @@
 # pokemongo-galaxy-demo
 This repository corresponds with the pokemon and mongo (get it?) demo done at
-Trino Summit 11/10. If you want more in depth information on setup details,
+Trino Summit 11/10/2022. If you want more in depth information on setup details,
 please reach out to me. I'd love to send you more information to help you get
 started and answer any questions. To federate my data sources, my MongoDB AWS region
 is the same as my AWS S3 region, US East (N Virginia). Naming will be important
